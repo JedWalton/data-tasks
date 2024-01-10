@@ -83,6 +83,8 @@ print("Number of nodes:", len(nodes))
 print("Number of edges:", len(network))
 
 
+# 3) Visualize the network
+
 import networkx as nx
 import matplotlib.pyplot as plt
 
