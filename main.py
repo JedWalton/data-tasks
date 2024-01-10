@@ -86,22 +86,27 @@ print("Number of edges:", len(network))
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# Create a directed graph
-G = nx.DiGraph()
+# Assuming 'network' is your list of edges
+first_5_edges = network[:5]  # Get the first 5 edges
 
-# Add edges from your network data
-# (For a large network, consider adding only a subset)
-for edge in network[:5]:  # Example: Adding first 100 edges
+# Create a new directed graph for the subgraph
+G_sub = nx.DiGraph()
+
+# Add only the first 5 edges to the subgraph
+for edge in first_5_edges:
     reverter, reverted, time, seniority_reverter, seniority_reverted = edge
-    G.add_edge(reverter, reverted, time=time, seniority_diff=seniority_reverter - seniority_reverted)
+    G_sub.add_edge(reverter, reverted, time=time, seniority_diff=seniority_reverter - seniority_reverted)
 
 # Use a layout algorithm to position the nodes. spring_layout is a good start
-pos = nx.spring_layout(G, k=0.15, iterations=20)
+pos = nx.spring_layout(G_sub)
 
 # Draw the nodes and edges with custom options
-nodes = nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=50, alpha=0.9)
-edges = nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=10, edge_color='gray', edge_cmap=plt.cm.Blues, width=2)
-labels = nx.draw_networkx_labels(G, pos, font_size=7, font_family='sans-serif')
+nx.draw(G_sub, pos, with_labels=True, node_color='skyblue', node_size=2500, font_size=10, edge_color='gray', width=2)
+
+# Add edge labels to show time of revert
+edge_labels = nx.get_edge_attributes(G_sub, 'time')
+nx.draw_networkx_edge_labels(G_sub, pos, edge_labels=edge_labels, font_color='red')
 
 plt.axis('off')  # Turn off the axis
 plt.show()
+
