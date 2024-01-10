@@ -91,12 +91,17 @@ G = nx.DiGraph()
 
 # Add edges from your network data
 # (For a large network, consider adding only a subset)
-for edge in network[:100]:  # Example: Adding first 100 edges
+for edge in network[:5]:  # Example: Adding first 100 edges
     reverter, reverted, time, seniority_reverter, seniority_reverted = edge
     G.add_edge(reverter, reverted, time=time, seniority_diff=seniority_reverter - seniority_reverted)
 
-# Plot the graph
-plt.figure(figsize=(12, 8))
-nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=1500, font_size=8)
-plt.title("Subset of Wikipedia Edit Reversion Network")
+# Use a layout algorithm to position the nodes. spring_layout is a good start
+pos = nx.spring_layout(G, k=0.15, iterations=20)
+
+# Draw the nodes and edges with custom options
+nodes = nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=50, alpha=0.9)
+edges = nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=10, edge_color='gray', edge_cmap=plt.cm.Blues, width=2)
+labels = nx.draw_networkx_labels(G, pos, font_size=7, font_family='sans-serif')
+
+plt.axis('off')  # Turn off the axis
 plt.show()
