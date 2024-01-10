@@ -82,3 +82,21 @@ nodes = set([edge[0] for edge in network] + [edge[1] for edge in network])
 print("Number of nodes:", len(nodes))
 print("Number of edges:", len(network))
 
+
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# Create a directed graph
+G = nx.DiGraph()
+
+# Add edges from your network data
+# (For a large network, consider adding only a subset)
+for edge in network[:100]:  # Example: Adding first 100 edges
+    reverter, reverted, time, seniority_reverter, seniority_reverted = edge
+    G.add_edge(reverter, reverted, time=time, seniority_diff=seniority_reverter - seniority_reverted)
+
+# Plot the graph
+plt.figure(figsize=(12, 8))
+nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=1500, font_size=8)
+plt.title("Subset of Wikipedia Edit Reversion Network")
+plt.show()
