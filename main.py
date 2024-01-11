@@ -45,43 +45,45 @@ except IOError as e:
 # print("The first 10 users are:")
 # print(wiki_data["user"][:10])
 
-## Build the network
+# 2) Build the network
 import math
 from collections import defaultdict
 
-network = []
+# Initialize data structures
 edits_per_user = defaultdict(int)
+version_history = defaultdict(list)  # Stores tuples of (time, user, version before edit)
+network = []
 
+# Build version history and track all edits
+for time, user, version in zip(wiki_data["time"], wiki_data["user"], wiki_data["version"]):
+    edits_per_user[user] += 1
+    # Store the current version and the version before the edit
+    if len(version_history[version]) > 0:
+        prev_version = version_history[version][-1][2]
+    else:
+        prev_version = None
+    version_history[version].append((time, user, prev_version))
 
-for i in range(1, len(wiki_data["user"])):
-    current_user = wiki_data["user"][i]
-    previous_user = wiki_data["user"][i - 1]
+# Process for reverts
+for time, user, revert, version in zip(wiki_data["time"], wiki_data["user"], wiki_data["revert"], wiki_data["version"]):
+    if revert == 1:
+        # Get the last time this version number occurred before the revert
+        previous_versions = [entry for entry in version_history[version] if entry[0] < time]
+        
+        if previous_versions:
+            _, prev_user, prev_version = previous_versions[-1]
 
-    # Update edit counts (this should be done for every edit, revert or not)
-    edits_per_user[current_user] += 1
+            # Check for valid revert and exclude self-reverts
+            if prev_version != version and user != prev_user:
+                seniority_reverter = math.log10(max(1, edits_per_user[user]))
+                seniority_reverted = math.log10(max(1, edits_per_user[prev_user]))
 
-    # Check if the current edit is a revert
-    if wiki_data["revert"][i] == 1:
-        # Skip self-reverts
-        if current_user == previous_user:
-            continue
+                # Add edge to the network
+                network.append((user, prev_user, time, seniority_reverter, seniority_reverted))
 
-        # Calculate seniority
-        seniority_reverter = math.log10(max(1, edits_per_user[previous_user]))
-        seniority_reverted = math.log10(max(1, edits_per_user[current_user]))
-
-        # Add to network (reverter, reverted, time, seniority_reverter, seniority_reverted)
-        network.append((previous_user, current_user, wiki_data["time"][i], seniority_reverter, seniority_reverted))
-
-
-# Print first 5 data points
+# Output the network information
 print("First 5 network edges:", network[:5])
-
-# Print number of nodes and edges
-nodes = set([edge[0] for edge in network] + [edge[1] for edge in network])
-print("Number of nodes:", len(nodes))
-print("Number of edges:", len(network))
-
+print("Total number of edges:", len(network))
 
 # 3) Visualize the network
 
