@@ -84,33 +84,3 @@ for time, user, revert, version in zip(wiki_data["time"], wiki_data["user"], wik
 # Output the network information
 print("First 5 network edges:", network[:5])
 print("Total number of edges:", len(network))
-
-# 3) Visualize the network
-
-# import networkx as nx
-# import matplotlib.pyplot as plt
-#
-# # Assuming 'network' is your list of edges
-# first_5_edges = network[:5]  # Get the first 5 edges
-#
-# # Create a new directed graph for the subgraph
-# G_sub = nx.DiGraph()
-#
-# # Add only the first 5 edges to the subgraph
-# for edge in first_5_edges:
-#     reverter, reverted, time, seniority_reverter, seniority_reverted = edge
-#     G_sub.add_edge(reverter, reverted, time=time, seniority_diff=seniority_reverter - seniority_reverted)
-#
-# # Use a layout algorithm to position the nodes. spring_layout is a good start
-# pos = nx.spring_layout(G_sub)
-#
-# # Draw the nodes and edges with custom options
-# nx.draw(G_sub, pos, with_labels=True, node_color='skyblue', node_size=2500, font_size=10, edge_color='gray', width=2)
-#
-# # Add edge labels to show time of revert
-# edge_labels = nx.get_edge_attributes(G_sub, 'time')
-# nx.draw_networkx_edge_labels(G_sub, pos, edge_labels=edge_labels, font_color='red')
-#
-# plt.axis('off')  # Turn off the axis
-# plt.show()
-#
